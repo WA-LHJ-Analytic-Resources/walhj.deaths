@@ -1,5 +1,5 @@
 Package: walhj.deaths
-Title: Load, Clean, and Analyze Death Certificate data.
+Title: Load, Clean, and Analyze Death Certificate data
 Version: 0.0.0.9000
 Authors@R: c(
     person("Tyler", "Bonnell", email = "Tyler.Bonnell@co.snohomish.wa.us",role = c("aut", "cre")),
