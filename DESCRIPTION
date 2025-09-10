@@ -1,11 +1,11 @@
 Package: walhj.deaths
-Title: What the Package Does (One Line, Title Case)
+Title: Load, Clean, and Analyze Death Certificate data.
 Version: 0.0.0.9000
 Authors@R: c(
     person("Tyler", "Bonnell", email = "Tyler.Bonnell@co.snohomish.wa.us",role = c("aut", "cre")),
     person("Jacob", "Armitage", email = "Jacob.Armitage@co.thurston.wa.us",role = c("aut")),
     person("Trey", "Evans", email = "Trey.Evans@kitsappublichealth.org",role = c("aut")))
-Description: What the package does (one paragraph).
+Description: This R packages provides custom R functions to support the loading, cleaning, and analysis of Death Certificate data by Washington Local Health Jurisdictions (LHJs).
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
