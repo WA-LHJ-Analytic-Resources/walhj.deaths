@@ -9,7 +9,9 @@ load_death_data(folder, include_prelim, file_years = NULL)
 \arguments{
 \item{folder}{(String) The folder path where your organzation stores downloaded death certificate statistical files.}
 
-\item{include_prelim}{(T|F) Option to laod preliminary death certificate statistical files in addition to finalized files.}
+\item{include_prelim}{(T|F) Option to load preliminary death certificate statistical files in addition to finalized files.}
+
+\item{file_years}{(Optional; Numeric) Provide a list of death certificate statistical file years to load.}
 }
 \value{
 A list of data frames (labelled by file year) containing death certificate statistical files
