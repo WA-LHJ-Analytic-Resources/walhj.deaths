@@ -15,41 +15,41 @@ load_death_data <- function(folder, include_prelim, file_years = NULL) {
     list(files = .) %>%
     tibble::as_tibble(.) %>%
     # Filter to Death Statistical Files
-    filter(str_detect(files, "DeathStat")) %>%
+    dplyr::filter(str_detect(files, "DeathStat")) %>%
     # Deduplicate Death Statistical Files (if there are both .csv and .xlsx copies) --> preference for .csv files.
     tidyr::separate_wider_delim(
       files,
       delim = ".",
       names = c("file", "file_type")
     ) %>%
-    mutate(priority = if_else(file_type == ".csv", 1, 2)) %>%
-    slice_min(order_by = priority, with_ties = FALSE, by = file) %>%
+    dplyr::mutate(priority = if_else(file_type == ".csv", 1, 2)) %>%
+    dplyr::slice_min(order_by = priority, with_ties = FALSE, by = file) %>%
     # Extract Year and Final File Version Information
-    mutate(
+    dplyr::mutate(
       year = stringr::str_extract(file, "[:digit:]{4}"),
       year = stringr::str_sub(year, start = 1, end = 4),
       year = as.numeric(year),
       final = stringr::str_detect(file, pattern = "Q", negate = TRUE)
     ) %>%
     # Arrange by Year
-    arrange(year) %>%
+    dplyr::arrange(year) %>%
     # Create filename name
-    mutate(filename = paste0(file, ".", file_type))
+    dplyr::mutate(filename = paste0(file, ".", file_type))
 
   # Step 1a: (Optional) Filter to final death certificate files
   if (include_prelim == FALSE) {
     files <- files %>%
-      filter(final == TRUE)
+      dplyr::filter(final == TRUE)
   }
 
   # Step 1b: (Optional) Filter to certain years of death certificate data
   if (!is.null(file_years)) {
     files <- files %>%
-      filter(year %in% file_years)
+      dplyr::filter(year %in% file_years)
   }
 
   # Step 2: Extract Death File Nmames
-  death_files <- files %>% pull(filename)
+  death_files <- files %>% dplyr::pull(filename)
 
   # Step 3: Load in Death Data
   death_list <- list()
