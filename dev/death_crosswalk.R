@@ -8,8 +8,14 @@ folder = "C:/Users/SHDTJB/Downloads/Death_Data"
 
 dat_2012 <- read_csv(here::here(folder, 'DeathStatF2012.csv')) %>%
   janitor::clean_names()
+
 dat_2022 <- read_csv(here::here(folder, 'DeathStatF2022.csv')) %>%
   janitor::clean_names()
+
+fips_crosswalk <- tidycensus::fips_codes %>%
+  distinct(state, state_code) %>%
+  select(fips = state_code, state)
+
 
 sort(names(dat_2012))
 sort(names(dat_2022))
@@ -201,10 +207,142 @@ dat_2012_new <- dat_2012 %>%
       marital_status == 6 ~ "P",
       marital_status == 9 ~ "U"
     )
-  )
+  ) %>%
+  # Autopsy
+  mutate(
+    autopsy = case_when(
+      autopsy == 1 ~ "Y",
+      autopsy == 2 ~ "N",
+      autopsy == 9 ~ "U",
+      TRUE ~ as.character(autopsy) # Unsure what to convert 0 to...
+    )
+  ) %>%
+  # State Variables
+  select(contains("state"))
 
-table(dat_2012_new$marital_status)
-table(dat_2022$marital_status)
+
+# TEST ------
+
+# Create a named vector for mapping
+state_map <- c(
+  "AL" = "01",
+  "AK" = "02",
+  "AZ" = "03",
+  "AR" = "04",
+  "CA" = "05",
+  "CO" = "06",
+  "CT" = "07",
+  "DE" = "08",
+  "DISTRICT OF COLUMBIA" = "09",
+  "FL" = "10",
+  "GA" = "11",
+  "HI" = "12",
+  "ID" = "13",
+  "IDAHO" = "13",
+  "IL" = "14",
+  "ILLINOIS" = "14",
+  "IN" = "15",
+  "INDIANA" = "15",
+  "IA" = "16",
+  "IOWA" = "16",
+  "KS" = "17",
+  "KANSAS" = "17",
+  "KY" = "18",
+  "KENTUCKY" = "18",
+  "LA" = "19",
+  "LOUISIANA" = "19",
+  "ME" = "20",
+  "MAINE" = "20",
+  "MD" = "21",
+  "MARYLAND" = "21",
+  "MA" = "22",
+  "MASSACHUSETTS" = "22",
+  "MI" = "23",
+  "MICHIGAN" = "23",
+  "MN" = "24",
+  "MINNESOTA" = "24",
+  "MS" = "25",
+  "MISSISSIPPI" = "25",
+  "MO" = "26",
+  "MISSOURI" = "26",
+  "MT" = "27",
+  "MONTANA" = "27",
+  "NE" = "28",
+  "NEBRASKA" = "28",
+  "NV" = "29",
+  "NEVADA" = "29",
+  "NH" = "30",
+  "NEW HAMPSHIRE" = "30",
+  "NJ" = "31",
+  "NEW JERSEY" = "31",
+  "NM" = "32",
+  "NEW MEXICO" = "32",
+  "NY" = "33",
+  "NEW YORK" = "33",
+  "NC" = "34",
+  "NORTH CAROLINA" = "34",
+  "ND" = "35",
+  "NORTH DAKOTA" = "35",
+  "OH" = "36",
+  "OHIO" = "36",
+  "OK" = "37",
+  "OKLAHOMA" = "37",
+  "OR" = "38",
+  "OREGON" = "38",
+  "PA" = "39",
+  "PENNSYLVANIA" = "39",
+  "RI" = "40",
+  "RHODE ISLAND" = "40",
+  "SC" = "41",
+  "SOUTH CAROLINA" = "41",
+  "SD" = "42",
+  "SOUTH DAKOTA" = "42",
+  "TN" = "43",
+  "TENNESSEE" = "43",
+  "TX" = "44",
+  "TEXAS" = "44",
+  "UT" = "45",
+  "UTAH" = "45",
+  "VT" = "46",
+  "VERMONT" = "46",
+  "VA" = "47",
+  "VIRGINIA" = "47",
+  "WA" = "48",
+  "WASHINGTON" = "48",
+  "WV" = "49",
+  "WEST VIRGINIA" = "49",
+  "WI" = "50",
+  "WISCONSIN" = "50",
+  "WY" = "51",
+  "WYOMING" = "51",
+  "PUERTO RICO" = "52",
+  "VIRGIN ISLANDS" = "53",
+  "GUAM" = "54",
+  "CANADA" = "55",
+  "CUBA" = "56",
+  "MEXICO" = "57",
+  "ZZ" = "59",
+  "AMERICAN SAMOA" = "60",
+  "MARIANA ISLANDS" = "69",
+  "NOT CLASSIFIABLE" = "99"
+)
+
+# Columns to recode
+cols_to_recode <- c(
+  "birthplace_state_fips_code",
+  "residence_state_fips_code",
+  "death_state",
+  "injury_state"
+)
+
+
+# Apply the mapping
+TEST <- dat_2012_new %>%
+  mutate(across(all_of(cols_to_recode), ~ state_map[.], .names = "{.col}"))
+
+
+table(dat_2012_new$residence_state_fips_code)
+table(dat_2022$death_state)
 
 sort(names(dat_2012_new))
 sort(names(dat_2022))
