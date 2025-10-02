@@ -75,4 +75,12 @@ load_raw_death_data <- function(folder, include_prelim, file_years = NULL) {
   return(death_list)
 }
 
-usethis::use_import_from("janitor", "clean_names")
+# Silence Messages about these objects created within load_raw_death_data()
+utils::globalVariables(c(
+  "file_type",
+  "priority",
+  "year",
+  "final",
+  "filename",
+  "."
+))
